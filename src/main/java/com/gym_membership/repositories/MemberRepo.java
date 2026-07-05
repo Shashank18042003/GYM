@@ -10,5 +10,6 @@ import com.gym_membership.entity.Member;
 public interface MemberRepo extends JpaRepository<Member, Long>{
 	Optional<Member> findByPhone(String phone);
 	boolean existsByPhone(String phone);
+	Optional<Member> findByUserEmail(String email);
 
 }
