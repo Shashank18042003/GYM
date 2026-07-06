@@ -98,5 +98,21 @@ public class GlobalExceptionHandler {
 	    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 	            .body(response);
 	}
+	
+	@ExceptionHandler(FileStorageException.class)
+	public ResponseEntity<ApiResponse<Object>> handleFileStorageException(
+	        FileStorageException ex) {
+
+	    ApiResponse<Object> response = ApiResponse.builder()
+	            .success(false)
+	            .message(ex.getMessage())
+	            .data(null)
+	            .timestamp(LocalDateTime.now())
+	            .build();
+
+	    return ResponseEntity
+	            .status(HttpStatus.BAD_REQUEST)
+	            .body(response);
+	}
 
 }
