@@ -11,5 +11,4 @@ public interface MemberService {
 
     ApiResponse<?> updateProfile(UpdateProfileRequest request);
     ApiResponse<?> uploadProfilePicture(MultipartFile file);
-
 }

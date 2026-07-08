@@ -1,6 +1,7 @@
 package com.gym_membership.servicesImpl;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -11,8 +12,13 @@ import com.gym_membership.dto.response.ApiResponse;
 import com.gym_membership.dto.response.ImageUploadResponse;
 import com.gym_membership.dto.response.MemberProfileResponse;
 import com.gym_membership.entity.Member;
+import com.gym_membership.entity.Membership;
+import com.gym_membership.entity.MembershipPlan;
+import com.gym_membership.entity.Payment;
+import com.gym_membership.enums.MembershipStatus;
 import com.gym_membership.exceptions.ResourceNotFoundException;
 import com.gym_membership.repositories.MemberRepo;
+import com.gym_membership.repositories.MembershipRepository;
 import com.gym_membership.security.SecurityUtil;
 import com.gym_membership.services.MemberService;
 import com.gym_membership.storage.FileStorageService;
@@ -25,6 +31,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepo memberRepo;
     private final FileStorageService fileStorageService;
+    private final MembershipRepository membershipRepo;
 
     @Override
     public ApiResponse<?> getProfile() {
@@ -110,5 +117,6 @@ public class MemberServiceImpl implements MemberService {
 	            .timestamp(LocalDateTime.now())
 	            .build();
 	}
+
 
 }

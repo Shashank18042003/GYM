@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gym_membership.dto.request.UpdateProfileRequest;
 import com.gym_membership.dto.response.ApiResponse;
 import com.gym_membership.services.MemberService;
+import com.gym_membership.services.MembershipPlanService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,22 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MembershipPlanService membershipPlanService;
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<?>> getProfile() {
         return ResponseEntity.ok(memberService.getProfile());
     }
 
+    
+    @GetMapping("/plans")
+    public ResponseEntity<ApiResponse<?>> getActivePlans() {
+
+        return ResponseEntity.ok(
+                membershipPlanService.getActivePlans());
+
+    }
+    
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<?>> updateProfile(
             @Valid @RequestBody UpdateProfileRequest request) {

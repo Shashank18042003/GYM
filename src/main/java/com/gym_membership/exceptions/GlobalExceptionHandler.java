@@ -114,5 +114,34 @@ public class GlobalExceptionHandler {
 	            .status(HttpStatus.BAD_REQUEST)
 	            .body(response);
 	}
+	@ExceptionHandler(PlanAlreadyExistsException.class)
+	public ResponseEntity<ApiResponse<Object>> handlePlanAlreadyExistsException(
+			PlanAlreadyExistsException ex){
+		
+		ApiResponse<Object> response = ApiResponse.builder()
+	            .success(false)
+	            .message(ex.getMessage())
+	            .data(null)
+	            .timestamp(LocalDateTime.now())
+	            .build();
+		return ResponseEntity
+	            .status(HttpStatus.CONFLICT)
+	            .body(response);
+	}
+	
+	@ExceptionHandler(MembershipException.class)
+	public ResponseEntity<ApiResponse<Object>> handleMembershipException(
+	        MembershipException ex) {
+
+	    ApiResponse<Object> response = ApiResponse.builder()
+	            .success(false)
+	            .message(ex.getMessage())
+	            .data(null)
+	            .timestamp(LocalDateTime.now())
+	            .build();
+
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	            .body(response);
+	}
 
 }
