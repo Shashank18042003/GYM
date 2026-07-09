@@ -7,8 +7,10 @@ import com.gym_membership.entity.Payment;
 
 public interface MembershipService {
 	
-	Membership activateMembership(Member member,
-            MembershipPlan membershipPlan,
-            Payment payment);
+	Membership createMembership(
+	        Member member,
+	        MembershipPlan membershipPlan,Payment payment);
+	
+	void processExpiredMemberships();
 
 }

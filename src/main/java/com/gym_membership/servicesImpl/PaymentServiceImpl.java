@@ -55,7 +55,7 @@ SUCCESS       VERIFY PAYMENT
 activateMembership()
    │
    ▼
-Membership Table Updated
+Membership ACTIVE Table Updated
 	**/
 	
 	
@@ -102,18 +102,6 @@ Membership Table Updated
 	                "Only active members can purchase a membership.");
 	    }
 
-	    // Check Existing Active Membership
-	    Membership activeMembership = membershipRepository
-	            .findFirstByMemberAndStatusOrderByExpiryDateDesc(
-	                    member,
-	                    MembershipStatus.ACTIVE)
-	            .orElse(null);
-
-	    if (activeMembership != null) {
-	        throw new MembershipException(
-	                "Member already has an active membership.");
-	    }
-
 	    // Fetch Membership Plan
 	    MembershipPlan membershipPlan = membershipPlanRepository
 	            .findById(request.getPlanId())
@@ -139,18 +127,17 @@ Membership Table Updated
 
 	    payment = paymentRepository.save(payment);
 
-	    // Activate Membership
-	    Membership membership = membershipService.activateMembership(
+	    // Create Membership (ACTIVE or PENDING based on queue)
+	    membershipService.createMembership(
 	            member,
-	            membershipPlan,
-	            payment);
+	            membershipPlan,payment);
 
 	    // Build Response
 	    PaymentResponse response = paymentMapper.toResponse(payment);
 
 	    return ApiResponse.builder()
 	            .success(true)
-	            .message("Cash payment recorded successfully and membership activated.")
+	            .message("Cash payment recorded successfully.")
 	            .data(response)
 	            .timestamp(LocalDateTime.now())
 	            .build();

@@ -143,5 +143,20 @@ public class GlobalExceptionHandler {
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 	            .body(response);
 	}
+	
+	
+	@ExceptionHandler(PaymentException.class)
+	public ResponseEntity<ApiResponse<?>> handlePaymentException(
+	        PaymentException ex) {
+
+	    ApiResponse<?> response = ApiResponse.builder()
+	            .success(false)
+	            .message(ex.getMessage())
+	            .data(null)
+	            .timestamp(LocalDateTime.now())
+	            .build();
+
+	    return ResponseEntity.badRequest().body(response);
+	}
 
 }

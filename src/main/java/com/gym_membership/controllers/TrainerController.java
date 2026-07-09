@@ -86,5 +86,15 @@ public class TrainerController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(paymentService.createCashPayment(memberId, request));
     }
+    
+  //  private final MembershipService membershipService;
+
+//    @PostMapping("/scheduler")
+//    public String runScheduler() {
+//
+//        membershipService.processExpiredMemberships();
+//
+//        return "Scheduler Executed Successfully";
+//    }
 
 }
