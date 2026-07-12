@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.gym_membership.entity.Member;
 import com.gym_membership.entity.Membership;
+import com.gym_membership.entity.Payment;
 import com.gym_membership.enums.MembershipStatus;
 
 public interface MembershipRepository extends JpaRepository<Membership, Long>{
@@ -42,6 +43,14 @@ public interface MembershipRepository extends JpaRepository<Membership, Long>{
 	List<Membership> findByStatusAndExpiryDate(
 	        MembershipStatus status,
 	        LocalDate expiryDate);
+	
+	
+	Optional<Membership> findByPayment(Payment payment);
+	
+	List<Membership> findByMemberAndStatusOrderByCreatedAtAsc(
+	        Member member,
+	        MembershipStatus status);
+
 	
 	
 	// previous ones

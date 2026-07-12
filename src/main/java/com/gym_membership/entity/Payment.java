@@ -68,5 +68,8 @@ public class Payment extends BaseEntity{
 	
 	@Column(name="signature")
 	private String razorpaySignature;
+	
+	@Column(length = 500)
+	private String paymentMessage;
 
 }

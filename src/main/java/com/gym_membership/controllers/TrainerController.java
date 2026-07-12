@@ -18,6 +18,7 @@ import com.gym_membership.dto.request.ChangePlanStatusRequest;
 import com.gym_membership.dto.request.CreatePlanRequest;
 import com.gym_membership.dto.request.UpdatePlanRequest;
 import com.gym_membership.dto.response.ApiResponse;
+import com.gym_membership.services.MemberService;
 import com.gym_membership.services.MembershipPlanService;
 import com.gym_membership.services.PaymentService;
 
@@ -32,6 +33,7 @@ public class TrainerController {
 
     private final MembershipPlanService membershipPlanService;
     private final PaymentService paymentService;
+    private final MemberService memberService;
 
     /**
      * Create Membership Plan
@@ -86,6 +88,32 @@ public class TrainerController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(paymentService.createCashPayment(memberId, request));
     }
+    
+    @GetMapping("/payments")
+    public ResponseEntity<ApiResponse<?>> getAllSuccessfulPayments() {
+
+        return ResponseEntity.ok(
+                paymentService.getAllSuccessfulPayments());
+    }
+   
+    @GetMapping("/members")
+    public ResponseEntity<ApiResponse<?>> getAllMembers() {
+
+        return ResponseEntity.ok(
+                memberService.getAllMembers());
+    }
+    
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<ApiResponse<?>> getMemberDetails(
+            @PathVariable Long memberId) {
+
+        return ResponseEntity.ok(
+                memberService.getMemberDetails(memberId));
+    }
+
+    
+    
+    
     
   //  private final MembershipService membershipService;
 

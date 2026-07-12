@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class VerifyPaymentRequest {
-	@NotBlank
+	@NotBlank(message = "Razorpay order_id is required")
 	private String razorpayOrderId;
-	@NotBlank
+	@NotBlank(message = "Razorpay payment_id is required")
 	private String razorpayPaymentId;
-	@NotBlank
+	@NotBlank(message = "Razorpay signature is required")
 	private String razorpaySignature;
 }

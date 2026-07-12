@@ -7,7 +7,7 @@ public interface RazorpayService {
 
     CreateOrderResponse createOrder(MembershipPlan membershipPlan, String paymentReference);
 
-    boolean verifySignature(
+    void verifySignature(
             String razorpayOrderId,
             String razorpayPaymentId,
             String razorpaySignature);

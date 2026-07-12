@@ -2,6 +2,7 @@ package com.gym_membership.dto.response;
 
 import java.time.LocalDate;
 
+import com.gym_membership.enums.Gender;
 import com.gym_membership.enums.MemberStatus;
 
 import lombok.AllArgsConstructor;
@@ -19,13 +20,14 @@ public class MemberProfileResponse {
 
     private String username;
 
+    private Integer age;
     private String email;
 
     private String fullName;
 
     private String phone;
 
-    private String gender;
+    private Gender gender;
 
     private LocalDate dob;
 

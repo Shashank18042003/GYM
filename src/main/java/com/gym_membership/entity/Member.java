@@ -39,6 +39,8 @@ public class Member extends BaseEntity{
 	@Column(nullable = false)
 	private String fullName;
 	
+	private Integer age;
+	
 	@Column(nullable = false,unique = true)
 	private String phone;
 	@Enumerated(EnumType.STRING)
@@ -51,5 +53,6 @@ public class Member extends BaseEntity{
 	
 	@Enumerated(EnumType.STRING)
 	private MemberStatus status;
+
 
 }

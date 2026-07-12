@@ -11,4 +11,6 @@ public interface MemberService {
 
     ApiResponse<?> updateProfile(UpdateProfileRequest request);
     ApiResponse<?> uploadProfilePicture(MultipartFile file);
+    ApiResponse<?> getAllMembers();
+    ApiResponse<?> getMemberDetails(Long memberId);
 }

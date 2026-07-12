@@ -1,6 +1,9 @@
 package com.gym_membership.servicesImpl;
 
+import java.math.BigDecimal;
+
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.gym_membership.dto.response.CreateOrderResponse;
@@ -10,6 +13,7 @@ import com.gym_membership.services.RazorpayService;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import com.razorpay.Utils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,10 +55,17 @@ public class RazorpayServiceImpl implements RazorpayService{
 	 * 				     ▼
 	 * 			ACTIVE or PENDING (Queue Logic)
 	 */
-	
+	@Value("${razorpay.key.id}")
 	private String keyId;
+	
+	@Value("${razorpay.currency}")
 	private String currency;
+	
+	@Value("${razorpay.key.secret}")
+	private String keySecret;
+	
 	private final RazorpayClient razorpayClient;
+	
 	@Override
 	public CreateOrderResponse createOrder(MembershipPlan membershipPlan, String paymentReference) {
 		try {
@@ -62,7 +73,7 @@ public class RazorpayServiceImpl implements RazorpayService{
             JSONObject options = new JSONObject();
 
             // Razorpay expects amount in paise
-            options.put("amount", membershipPlan.getPrice());
+            options.put("amount", membershipPlan.getPrice().multiply(BigDecimal.valueOf(100)).longValue());
 
             options.put("currency", currency);
 
@@ -72,9 +83,9 @@ public class RazorpayServiceImpl implements RazorpayService{
 
             return CreateOrderResponse.builder()
                     .key(keyId)
-                    .orderId(order.get("id"))
-                    .amount(order.get("amount"))
-                    .currency(order.get("currency"))
+                    .orderId(order.get("id").toString())
+                    .amount(((Number) order.get("amount")).longValue())
+                    .currency(order.get("currency").toString())
                     .build();
 
         } catch (RazorpayException e) {
@@ -84,10 +95,56 @@ public class RazorpayServiceImpl implements RazorpayService{
 
         }
 	}
+	
+	/**
+	 * Find Payment
+	 * 
+	 * ↓
+	 * 
+	 * Already SUCCESS?
+	 * 
+	 * ↓
+	 * 
+	 * Reject
+	 * 
+	 * ↓
+	 * 
+	 * Verify Signature
+	 * 
+	 * ↓
+	 * 
+	 * SUCCESS
+	 * 
+	 * ↓
+	 * 
+	 * Update Payment
+	 * 
+	 * ↓
+	 * 
+	 * Create Membership
+	 * 
+	 * ↓
+	 * 
+	 * Return Success
+	 */
 	@Override
-	public boolean verifySignature(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
-		// TODO Auto-generated method stub
-		return false;
+	public void verifySignature(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
+		 try {
+
+		        JSONObject options = new JSONObject();
+
+		        options.put("razorpay_order_id", razorpayOrderId);
+		        options.put("razorpay_payment_id", razorpayPaymentId);
+		        options.put("razorpay_signature", razorpaySignature);
+
+		        Utils.verifyPaymentSignature(options, keySecret);
+
+		    } catch (RazorpayException e) {
+
+		        throw new PaymentException(
+		                "Payment signature verification failed.");
+
+		    }
 	}
 	
 }

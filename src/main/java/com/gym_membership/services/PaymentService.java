@@ -7,13 +7,15 @@ import com.gym_membership.dto.response.ApiResponse;
 
 public interface PaymentService {
 
-    ApiResponse<?> createRazorpayOrder(CreateOrderRequest request);
+    ApiResponse<?> createRazorpayOrder(Long memberId, CreateOrderRequest request);
 
     ApiResponse<?> verifyPayment(VerifyPaymentRequest request);
 
     ApiResponse<?> createCashPayment(Long memberId,
                                      CashPaymentRequest request);
 
-    ApiResponse<?> getPaymentHistory();
+    ApiResponse<?> getMyPaymentHistory(Long memberId);
+    
+    ApiResponse<?> getAllSuccessfulPayments();
 
 }
