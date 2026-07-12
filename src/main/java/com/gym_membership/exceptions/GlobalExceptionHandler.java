@@ -158,5 +158,19 @@ public class GlobalExceptionHandler {
 
 	    return ResponseEntity.badRequest().body(response);
 	}
+	
+	@ExceptionHandler(EventException.class)
+	public ResponseEntity<ApiResponse<?>> handleEventException(
+			EventException ex) {
+
+	    ApiResponse<?> response = ApiResponse.builder()
+	            .success(false)
+	            .message(ex.getMessage())
+	            .data(null)
+	            .timestamp(LocalDateTime.now())
+	            .build();
+
+	    return ResponseEntity.badRequest().body(response);
+	}
 
 }

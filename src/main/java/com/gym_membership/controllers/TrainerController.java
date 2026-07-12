@@ -4,6 +4,7 @@ package com.gym_membership.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,13 +12,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gym_membership.dto.request.CashPaymentRequest;
 import com.gym_membership.dto.request.ChangePlanStatusRequest;
+import com.gym_membership.dto.request.CreateEventRequest;
 import com.gym_membership.dto.request.CreatePlanRequest;
+import com.gym_membership.dto.request.UpdateEventRequest;
 import com.gym_membership.dto.request.UpdatePlanRequest;
 import com.gym_membership.dto.response.ApiResponse;
+import com.gym_membership.enums.MemberFilter;
+import com.gym_membership.services.EventService;
 import com.gym_membership.services.MemberService;
 import com.gym_membership.services.MembershipPlanService;
 import com.gym_membership.services.PaymentService;
@@ -34,6 +40,7 @@ public class TrainerController {
     private final MembershipPlanService membershipPlanService;
     private final PaymentService paymentService;
     private final MemberService memberService;
+    private final EventService eventService;
 
     /**
      * Create Membership Plan
@@ -97,10 +104,12 @@ public class TrainerController {
     }
    
     @GetMapping("/members")
-    public ResponseEntity<ApiResponse<?>> getAllMembers() {
+    public ResponseEntity<ApiResponse<?>> getMembers(
+            @RequestParam(defaultValue = "ALL") MemberFilter filter,
+            @RequestParam(required = false) Integer days) {
 
         return ResponseEntity.ok(
-                memberService.getAllMembers());
+                memberService.getMembers(filter, days));
     }
     
     @GetMapping("/members/{memberId}")
@@ -110,9 +119,45 @@ public class TrainerController {
         return ResponseEntity.ok(
                 memberService.getMemberDetails(memberId));
     }
+    
+    @PostMapping("/events")
+    public ResponseEntity<ApiResponse<?>> createEvent(
+            @Valid @RequestBody CreateEventRequest request) {
 
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(eventService.createEvent(request));
+    }
     
+    @GetMapping("/events")
+    public ResponseEntity<ApiResponse<?>> getAllEvents() {
+
+        return ResponseEntity.ok(
+                eventService.getAllEvents());
+    }
+
+    @GetMapping("/events/{eventId}")
+    public ResponseEntity<ApiResponse<?>> getEvent(
+            @PathVariable Long eventId) {
+
+        return ResponseEntity.ok(
+                eventService.getEvent(eventId));
+    }
     
+    @PutMapping("/events/{eventId}")
+    public ResponseEntity<ApiResponse<?>> updateEvent(
+            @PathVariable Long eventId,
+            @Valid @RequestBody UpdateEventRequest request) {
+
+        return ResponseEntity.ok(
+                eventService.updateEvent(eventId, request));
+    }
+    @DeleteMapping("/events/{eventId}")
+    public ResponseEntity<ApiResponse<?>> deleteEvent(
+            @PathVariable Long eventId) {
+
+        return ResponseEntity.ok(
+                eventService.deleteEvent(eventId));
+    }
     
     
   //  private final MembershipService membershipService;

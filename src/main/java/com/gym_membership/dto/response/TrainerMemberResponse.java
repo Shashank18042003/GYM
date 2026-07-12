@@ -1,5 +1,7 @@
 package com.gym_membership.dto.response;
 
+import java.time.LocalDate;
+
 import com.gym_membership.enums.MembershipStatus;
 
 import lombok.AllArgsConstructor;
@@ -22,9 +24,10 @@ public class TrainerMemberResponse {
     private String phoneNumber;
 
     private String currentPlan;
-    
+
     private MembershipStatus membershipStatus;
 
-	
+    private LocalDate expiryDate;
 
+    private Long daysLeft;
 }

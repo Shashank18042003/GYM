@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gym_membership.dto.request.UpdateProfileRequest;
 import com.gym_membership.dto.response.ApiResponse;
+import com.gym_membership.enums.MemberFilter;
 
 public interface MemberService {
 
@@ -11,6 +12,6 @@ public interface MemberService {
 
     ApiResponse<?> updateProfile(UpdateProfileRequest request);
     ApiResponse<?> uploadProfilePicture(MultipartFile file);
-    ApiResponse<?> getAllMembers();
+    ApiResponse<?> getMembers(MemberFilter filter, Integer days);
     ApiResponse<?> getMemberDetails(Long memberId);
 }

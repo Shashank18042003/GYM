@@ -51,7 +51,13 @@ public interface MembershipRepository extends JpaRepository<Membership, Long>{
 	        Member member,
 	        MembershipStatus status);
 
+	List<Membership> findByStatusOrderByExpiryDateAsc(
+	        MembershipStatus status);
 	
+	List<Membership> findByStatusAndExpiryDateBetweenOrderByExpiryDateAsc(
+	        MembershipStatus status,
+	        LocalDate startDate,
+	        LocalDate endDate);
 	
 	// previous ones
 	/**
