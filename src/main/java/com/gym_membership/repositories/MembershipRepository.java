@@ -59,6 +59,12 @@ public interface MembershipRepository extends JpaRepository<Membership, Long>{
 	        LocalDate startDate,
 	        LocalDate endDate);
 	
+	long countByStatus(MembershipStatus status);
+	long countByStatusAndExpiryDateBetween(
+	        MembershipStatus status,
+	        LocalDate startDate,
+	        LocalDate endDate);
+	
 	// previous ones
 	/**
 	Optional<Membership> findFirstByMemberAndStatusOrderByExpiryDateDesc(Member member,MembershipStatus status);

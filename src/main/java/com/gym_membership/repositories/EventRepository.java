@@ -26,4 +26,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Transactional
     void deleteByEventDateBefore(LocalDate date);
 
+    long countByEventDateGreaterThanEqual(
+            LocalDate date);
 }

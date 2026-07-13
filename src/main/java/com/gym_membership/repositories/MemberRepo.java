@@ -13,5 +13,6 @@ public interface MemberRepo extends JpaRepository<Member, Long>{
 	boolean existsByPhone(String phone);
 	Optional<Member> findByUserEmail(String email);
 	List<Member> findAllByOrderByCreatedAtDesc();
+	
 
 }

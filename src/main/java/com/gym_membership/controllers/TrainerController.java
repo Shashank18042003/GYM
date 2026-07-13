@@ -23,6 +23,7 @@ import com.gym_membership.dto.request.UpdateEventRequest;
 import com.gym_membership.dto.request.UpdatePlanRequest;
 import com.gym_membership.dto.response.ApiResponse;
 import com.gym_membership.enums.MemberFilter;
+import com.gym_membership.services.DashboardService;
 import com.gym_membership.services.EventService;
 import com.gym_membership.services.MemberService;
 import com.gym_membership.services.MembershipPlanService;
@@ -41,6 +42,7 @@ public class TrainerController {
     private final PaymentService paymentService;
     private final MemberService memberService;
     private final EventService eventService;
+    private final DashboardService dashboardService;
 
     /**
      * Create Membership Plan
@@ -157,6 +159,14 @@ public class TrainerController {
 
         return ResponseEntity.ok(
                 eventService.deleteEvent(eventId));
+    }
+    
+    
+    @GetMapping("/dashboard")
+    public ResponseEntity<ApiResponse<?>> getDashboard() {
+
+        return ResponseEntity.ok(
+                dashboardService.getTrainerDashboard());
     }
     
     
