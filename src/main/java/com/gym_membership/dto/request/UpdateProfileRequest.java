@@ -14,12 +14,14 @@ public class UpdateProfileRequest {
     @NotBlank(message = "full name is required")
     private String fullName;
 
-    @Pattern(
-            regexp = "^[6-9]\\d{9}$",
-            message = "Invalid Phone Number")
-    private String phone;
+//    @Pattern(
+//            regexp = "^[6-9]\\d{9}$",
+//            message = "Invalid Phone Number")
+//    private String phone;
 
     private Gender gender;
+    
+    private Integer age;
 
     private LocalDate dob;
 

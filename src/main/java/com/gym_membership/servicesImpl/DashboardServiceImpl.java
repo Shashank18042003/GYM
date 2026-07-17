@@ -17,9 +17,11 @@ import com.gym_membership.repositories.PaymentRepository;
 import com.gym_membership.services.DashboardService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DashboardServiceImpl implements DashboardService{
 	
 	
@@ -50,6 +52,7 @@ public class DashboardServiceImpl implements DashboardService{
         BigDecimal todayRevenue = paymentRepository.getTodayRevenue();
 
         BigDecimal monthlyRevenue = paymentRepository.getMonthlyRevenue();
+        log.info("Today's Revenue: {}", todayRevenue);
 
         long successfulPayments = paymentRepository
                 .countByPaymentStatus(PaymentStatus.SUCCESS);

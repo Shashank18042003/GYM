@@ -23,13 +23,11 @@ import com.gym_membership.entity.Member;
 import com.gym_membership.entity.Membership;
 import com.gym_membership.entity.User;
 import com.gym_membership.enums.MemberFilter;
+import com.gym_membership.enums.MemberStatus;
 import com.gym_membership.enums.MembershipStatus;
 import com.gym_membership.exceptions.ResourceNotFoundException;
-import com.gym_membership.mapper.MemberMapper;
-import com.gym_membership.mapper.PaymentMapper;
 import com.gym_membership.repositories.MemberRepo;
 import com.gym_membership.repositories.MembershipRepository;
-import com.gym_membership.repositories.PaymentRepository;
 import com.gym_membership.security.SecurityUtil;
 import com.gym_membership.services.MemberService;
 import com.gym_membership.storage.FileStorageService;
@@ -43,9 +41,10 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepo memberRepo;
     private final FileStorageService fileStorageService;
     private final MembershipRepository membershipRepo;
-    private final MemberMapper memberMapper;
-    private final PaymentRepository paymentRepository;
-    private final PaymentMapper paymentMapper;
+//    private final MemberMapper memberMapper;
+//    private final PaymentRepository paymentRepository;
+//    private final PaymentMapper paymentMapper;
+//    private final UserRepo userRepo;
 
     @Override
     public ApiResponse<?> getProfile() {
@@ -59,6 +58,7 @@ public class MemberServiceImpl implements MemberService {
         MemberProfileResponse response = MemberProfileResponse.builder()
                 .id(member.getId())
                 .username(member.getUser().getUsername())
+                .age(member.getAge())
                 .email(member.getUser().getEmail())
                 .fullName(member.getFullName())
                 .phone(member.getPhone())
@@ -89,7 +89,8 @@ public class MemberServiceImpl implements MemberService {
                         new ResourceNotFoundException("Member not found"));
 
         member.setFullName(request.getFullName());
-        member.setPhone(request.getPhone());
+        member.getPhone();
+        member.setAge(request.getAge());
         member.setGender(request.getGender());
         member.setDob(request.getDob());
         member.setHeight(request.getHeight());
@@ -135,54 +136,53 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional(readOnly = true)
 	public ApiResponse<?> getMembers(MemberFilter filter, Integer days) {
+		List<TrainerMemberResponse> response;
 
-	    List<Membership> memberships = switch (filter) {
+		if (filter == MemberFilter.ALL) {
 
-	        case ACTIVE ->
-	                membershipRepo.findByStatusOrderByExpiryDateAsc(
-	                        MembershipStatus.ACTIVE);
+		    response = memberRepo
+		            .findByStatusOrderByCreatedAtDesc(MemberStatus.ACTIVE)
+		            .stream()
+		            .map(this::buildTrainerMemberResponse)
+		            .toList();
 
-	        case EXPIRED ->
-	                membershipRepo.findByStatusOrderByExpiryDateAsc(
-	                        MembershipStatus.EXPIRED);
+		} else {
 
-	        case RENEWAL_DUE -> {
+		    List<Membership> memberships = switch (filter) {
 
-	            int renewalDays = (days == null) ? 3 : days;
+		        case ACTIVE ->
+		                membershipRepo.findByStatusOrderByExpiryDateAsc(
+		                        MembershipStatus.ACTIVE);
 
-	            yield membershipRepo
-	                    .findByStatusAndExpiryDateBetweenOrderByExpiryDateAsc(
-	                            MembershipStatus.ACTIVE,
-	                            LocalDate.now(),
-	                            LocalDate.now().plusDays(renewalDays));
-	        }
+		        case EXPIRED ->
+		                membershipRepo.findByStatusOrderByExpiryDateAsc(
+		                        MembershipStatus.EXPIRED);
 
-	        case ALL -> {
+		        case RENEWAL_DUE -> {
 
-	            List<Membership> all = new ArrayList<>();
+		            int renewalDays = (days == null) ? 3 : days;
 
-	            all.addAll(
-	                    membershipRepo.findByStatusOrderByExpiryDateAsc(
-	                            MembershipStatus.ACTIVE));
+		            yield membershipRepo
+		                    .findByStatusAndExpiryDateBetweenOrderByExpiryDateAsc(
+		                            MembershipStatus.ACTIVE,
+		                            LocalDate.now(),
+		                            LocalDate.now().plusDays(renewalDays));
+		        }
 
-	            all.addAll(
-	                    membershipRepo.findByStatusOrderByExpiryDateAsc(
-	                            MembershipStatus.EXPIRED));
+		        default -> new ArrayList<>();
+		    };
 
-	            yield all;
-	        }
-	    };
+		    response = memberships.stream()
+		            .map(this::buildTrainerMemberResponse)
+		            .toList();
+		}
 
-	    List<TrainerMemberResponse> response = memberships.stream()
-	            .map(this::buildTrainerMemberResponse)
-	            .toList();
-
-	    return ApiResponse.builder()
-	            .success(true)
-	            .message("Members fetched successfully.")
-	            .data(response)
-	            .timestamp(LocalDateTime.now())
-	            .build();
+		return ApiResponse.builder()
+		        .success(true)
+		        .message("Members fetched successfully.")
+		        .data(response)
+		        .timestamp(LocalDateTime.now())
+		        .build();
 	}
 
 	@Override
@@ -207,6 +207,7 @@ public class MemberServiceImpl implements MemberService {
 	            .height(member.getHeight())
 	            .weight(member.getWeight())
 	            .profileImage(member.getProfileImage())
+	            .status(member.getStatus())
 	            .build();
 
 	    // ===========================
@@ -307,5 +308,38 @@ public class MemberServiceImpl implements MemberService {
 	            .daysLeft(daysLeft)
 	            .build();
 	}
+	
+	private TrainerMemberResponse buildTrainerMemberResponse(Member member) {
 
+	    User user = member.getUser();
+
+	    Membership membership = membershipRepo
+	            .findFirstByMemberOrderByExpiryDateDesc(member)
+	            .orElse(null);
+
+	    TrainerMemberResponse.TrainerMemberResponseBuilder builder =
+	            TrainerMemberResponse.builder()
+	                    .memberId(member.getId())
+	                    .fullName(member.getFullName())
+	                    .email(user.getEmail())
+	                    .phoneNumber(member.getPhone());
+
+	    if (membership != null) {
+
+	        Long daysLeft = null;
+
+	        if (membership.getExpiryDate() != null) {
+	            daysLeft = ChronoUnit.DAYS.between(
+	                    LocalDate.now(),
+	                    membership.getExpiryDate());
+	        }
+
+	        builder.currentPlan(membership.getMembershipPlan().getPlanName())
+	                .membershipStatus(membership.getStatus())
+	                .expiryDate(membership.getExpiryDate())
+	                .daysLeft(daysLeft);
+	    }
+
+	    return builder.build();
+	}
 }

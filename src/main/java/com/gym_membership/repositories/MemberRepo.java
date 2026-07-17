@@ -7,12 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.gym_membership.entity.Member;
+import com.gym_membership.enums.MemberStatus;
 @Repository
 public interface MemberRepo extends JpaRepository<Member, Long>{
 	Optional<Member> findByPhone(String phone);
 	boolean existsByPhone(String phone);
 	Optional<Member> findByUserEmail(String email);
 	List<Member> findAllByOrderByCreatedAtDesc();
-	
+	List<Member> findByStatusOrderByCreatedAtDesc(MemberStatus status);
 
 }
