@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.gym_membership.ai.dto.ChatRequest;
 import com.gym_membership.ai.dto.ChatResponse;
+import com.gym_membership.ai.orchestrator.AgentOrchestrator;
 import com.gym_membership.dto.response.ApiResponse;
 import com.gym_membership.services.MemberAiService;
 
@@ -15,12 +16,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberAiServiceImpl implements MemberAiService {
 
+	private final AgentOrchestrator agentOrchestrator;
     @Override
     public ApiResponse<?> chat(ChatRequest request) {
 
-    	ChatResponse response = ChatResponse.builder()
-                .response("AI module initialized successfully.")
-                .build();
+    	ChatResponse response = agentOrchestrator.process(request);
 
         return ApiResponse.<ChatResponse>builder()
                 .success(true)
