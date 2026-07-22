@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.gym_membership.dto.response.ApiResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 	@ExceptionHandler(UserAlreadyExistsException.class)
 	public ResponseEntity<ApiResponse<Object>> handleUserAlreadyExists(UserAlreadyExistsException ex){
@@ -171,6 +174,24 @@ public class GlobalExceptionHandler {
 	            .build();
 
 	    return ResponseEntity.badRequest().body(response);
+	}
+	
+	@ExceptionHandler(AiResponseParsingException.class)
+	public ResponseEntity<ApiResponse<?>> handleAiResponseParsingException(
+	        AiResponseParsingException ex) {
+
+	    log.error("AI response parsing failed", ex);
+
+	    ApiResponse<?> response = ApiResponse.builder()
+	            .success(false)
+	            .message("Unable to process the AI response. Please try again.")
+	            .data(null)
+	            .timestamp(LocalDateTime.now())
+	            .build();
+
+	    return ResponseEntity
+	            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body(response);
 	}
 
 }
