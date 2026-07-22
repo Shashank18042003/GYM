@@ -22,10 +22,19 @@ public class WorkoutExtractionPromptBuilderImpl
                   "goal": null,
                   "experience": null,
                   "trainingDays": null,
+                  "workoutDuration": null,
                   "bodyParts": [],
                   "equipment": null
                 }
 
+				Workout Duration:
+				- Return the workout duration in minutes.
+				- Allowed values:
+				  - 30
+				  - 45
+				  - 60
+				  - 90
+				- If the user doesn't mention a duration, return null.
                 Allowed goal values:
                 - MUSCLE_GAIN
                 - WEIGHT_LOSS

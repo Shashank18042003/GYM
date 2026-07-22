@@ -19,5 +19,6 @@ public class WorkoutRequest {
     private List<String> bodyParts;
 
     private String equipment;
+    private Integer workoutDuration;
 
 }
